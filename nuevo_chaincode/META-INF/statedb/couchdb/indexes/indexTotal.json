@@ -1,8 +1,0 @@
-{
-    "index":{
-        "fields":["docType","cantidad"]
-        },
-        "ddoc":"indexTotalDoc",
-        "name":"indexTotal",
-        "type":"json"
-    }

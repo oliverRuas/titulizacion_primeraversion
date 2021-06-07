@@ -1,8 +1,0 @@
-{
-    "index":{
-        "fields":["docType","client"]
-        },
-        "ddoc":"indexClientDoc",
-        "name":"indexClient",
-        "type":"json"
-    }

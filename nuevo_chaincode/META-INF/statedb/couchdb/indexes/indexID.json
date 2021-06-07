@@ -1,8 +1,0 @@
-{
-    "index":{
-        "fields":["docType","identidad"]
-        },
-        "ddoc":"indexIdDoc",
-        "name":"indexID",
-        "type":"json"
-    }

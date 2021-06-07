@@ -1,8 +1,0 @@
-{
-    "index":{
-        "fields":["docType","default","periodo"]
-        },
-        "ddoc":"indexPeriodDoc",
-        "name":"indexPeriod",
-        "type":"json"
-    }
