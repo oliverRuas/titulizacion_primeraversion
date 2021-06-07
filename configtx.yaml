@@ -1,0 +1,309 @@
+
+---
+################################################################################
+#   Section: Organizations
+################################################################################
+Organizations:
+    - &originator
+        Name: originatorMSP
+        ID: originatorMSP
+        MSPDir: fabric-ca/originator/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('originatorMSP.admin','originatorMSP.peer', 'originatorMSP.client', 'originatorMSP.orderer')"
+            Writers:
+                Type: Signature
+                Rule: "OR('originatorMSP.admin', 'originatorMSP.client', 'originatorMSP.orderer')"
+            Admins:
+                Type: Signature
+                Rule: "OR('originatorMSP.admin')"
+            Orderers:
+                Type: Signature
+                Rule: "OR('originatorMSP.orderer')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('originatorMSP.peer')"
+        AnchorPeers:
+            - Host: originator-peer
+              Port: 7051
+        OrdererEndpoints:
+            - originator-orderer:7050
+
+    - &farmer
+        Name: farmerMSP
+        ID: farmerMSP
+        MSPDir: fabric-ca/farmer/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('farmerMSP.admin', 'farmerMSP.peer', 'farmerMSP.client', 'farmerMSP.orderer')"
+            Writers:
+                Type: Signature
+                Rule: "OR('farmerMSP.admin', 'farmerMSP.client', 'farmerMSP.orderer')"
+            Admins:
+                Type: Signature
+                Rule: "OR('farmerMSP.admin')"
+            Orderers:
+                Type: Signature
+                Rule: "OR('farmerMSP.orderer')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('farmerMSP.peer')"
+        AnchorPeers:
+            - Host: farmer-peer
+              Port: 7051
+        OrdererEndpoints:
+            - farmer-orderer:7050
+
+    - &aggregator
+        Name: aggregatorMSP
+        ID: aggregatorMSP
+        MSPDir: fabric-ca/aggregator/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('aggregatorMSP.admin', 'aggregatorMSP.peer', 'aggregatorMSP.client', 'aggregatorMSP.orderer')"
+            Writers:
+                Type: Signature
+                Rule: "OR('aggregatorMSP.admin', 'aggregatorMSP.client', 'aggregatorMSP.orderer')"
+            Admins:
+                Type: Signature
+                Rule: "OR('aggregatorMSP.admin')"
+            Orderers:
+                Type: Signature
+                Rule: "OR('aggregatorMSP.orderer')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('aggregatorMSP.peer')"
+        AnchorPeers:
+            - Host: aggregator-peer
+              Port: 7051
+        OrdererEndpoints:
+            - aggregator-orderer:7050
+
+    - &spv
+        Name: spvMSP
+        ID: spvMSP
+        MSPDir: fabric-ca/spv/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('spvMSP.admin', 'spvMSP.peer', 'spvMSP.client', 'spvMSP.orderer')"
+            Writers:
+                Type: Signature
+                Rule: "OR('spvMSP.admin', 'spvMSP.client', 'spvMSP.orderer')"
+            Admins:
+                Type: Signature
+                Rule: "OR('spvMSP.admin')"
+            Orderers:
+                Type: Signature
+                Rule: "OR('spvMSP.orderer')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('spvMSP.peer')"
+        AnchorPeers:
+            - Host: spv-peer
+              Port: 7051
+        OrdererEndpoints:
+            - spv-orderer:7050
+
+
+    - &underwritter
+        Name: underwritterMSP
+        ID: underwritterMSP
+        MSPDir: fabric-ca/underwritter/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('underwritterMSP.admin', 'underwritterMSP.peer', 'underwritterMSP.client', 'underwritterMSP.orderer')"
+            Writers:
+                Type: Signature
+                Rule: "OR('underwritterMSP.admin', 'underwritterMSP.client', 'underwritterMSP.orderer')"
+            Admins:
+                Type: Signature
+                Rule: "OR('underwritterMSP.admin')"
+            Orderers:
+                Type: Signature
+                Rule: "OR('underwritterMSP.orderer')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('underwritterMSP.peer')"
+        AnchorPeers:
+            - Host: underwritter-peer
+              Port: 7051
+        OrdererEndpoints:
+            - underwritter-orderer:7050
+
+
+################################################################################
+#   SECTION: Capabilities
+################################################################################
+Capabilities:
+    Channel: &ChannelCapabilities
+        V2_0: true
+
+    Orderer: &OrdererCapabilities
+        V2_0: true
+
+    Application: &ApplicationCapabilities
+        V2_0: true
+
+################################################################################
+#   SECTION: Application
+################################################################################
+Application: &ApplicationDefaults
+
+    # Organizations is the list of orgs which are defined as participants on
+    # the application side of the network
+    Organizations:
+
+    # Policies defines the set of policies at this level of the config tree
+    # For Application policies, their canonical path is
+    #   /Channel/Application/<PolicyName>
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        LifecycleEndorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+        Endorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+
+    Capabilities:
+        <<: *ApplicationCapabilities
+
+################################################################################
+#   SECTION: Orderer
+################################################################################
+Orderer: &OrdererDefaults
+    # Orderer Type: The orderer consensus algorithm
+    OrdererType: etcdraft
+
+    EtcdRaft:
+        Consenters:
+        - Host: originator-orderer
+          Port: 7050
+          ClientTLSCert: fabric-ca/originator/orderers/originator-orderer/tls/server.crt
+          ServerTLSCert: fabric-ca/originator/orderers/originator-orderer/tls/server.crt
+        - Host: farmer-orderer
+          Port: 7050
+          ClientTLSCert: fabric-ca/farmer/orderers/farmer-orderer/tls/server.crt
+          ServerTLSCert: fabric-ca/farmer/orderers/farmer-orderer/tls/server.crt
+        - Host: aggregator-orderer
+          Port: 7050
+          ClientTLSCert: fabric-ca/aggregator/orderers/aggregator-orderer/tls/server.crt
+          ServerTLSCert: fabric-ca/aggregator/orderers/aggregator-orderer/tls/server.crt
+        - Host: spv-orderer
+          Port: 7050
+          ClientTLSCert: fabric-ca/spv/orderers/spv-orderer/tls/server.crt
+          ServerTLSCert: fabric-ca/spv/orderers/spv-orderer/tls/server.crt
+        - Host: underwritter-orderer
+          Port: 7050
+          ClientTLSCert: fabric-ca/underwritter/orderers/underwritter-orderer/tls/server.crt
+          ServerTLSCert: fabric-ca/underwritter/orderers/underwritter-orderer/tls/server.crt
+
+    Addresses:
+        #- orderer.acme.com:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 500
+        AbsoluteMaxBytes: 10 MB
+        PreferredMaxBytes: 2 MB
+
+
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        # BlockValidation specifies what signatures must be included in the block
+        # from the orderer for the peer to validate it.
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Orderers"
+
+################################################################################
+#
+#   CHANNEL
+#
+#   This section defines the values to encode into a config transaction or
+#   genesis block for channel related parameters.
+#
+################################################################################
+Channel: &ChannelDefaults
+    # Policies defines the set of policies at this level of the config tree
+    # For Channel policies, their canonical path is
+    #   /Channel/<PolicyName>
+    Policies:
+        # Who may invoke the 'Deliver' API
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        # Who may invoke the 'Broadcast' API
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        # By default, who may modify elements at this config level
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+
+    # Capabilities describes the channel level capabilities, see the
+    # dedicated Capabilities section elsewhere in this file for a full
+    # description
+    Capabilities:
+        <<: *ChannelCapabilities
+
+################################################################################
+#   Profile
+################################################################################
+Profiles:
+
+      FiveOrgsOrdererGenesis:
+        <<: *ChannelDefaults
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                #- *OrdererOrg
+                - *originator
+                - *farmer
+                - *aggregator
+                - *spv
+                - *underwritter
+            Capabilities:
+                <<: *OrdererCapabilities
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *originator
+                    - *farmer
+                    - *aggregator
+                    - *spv
+                    - *underwritter
+      FiveOrgsChannel:
+        Consortium: SampleConsortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *originator
+                - *farmer
+                - *aggregator
+                - *spv
+                - *underwritter
+            Capabilities:
+                <<: *ApplicationCapabilities
